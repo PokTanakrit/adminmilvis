@@ -1,0 +1,85 @@
+/* Sidebar Container */
+.sidebar-menu {
+  position: fixed;
+  width: 250px;
+  background-color: #2d5a75;
+  color: white;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: 'Prompt', sans-serif; /* ฟอนต์ภาษาไทย */
+}
+
+/* Admin Info */
+.admin-info {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #3b7a9e;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.admin-icon {
+  font-size: 30px;
+  margin-right: 10px;
+}
+
+.admin-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-size: 14px;
+  color: #b0d4ed;
+}
+
+/* Menu Items */
+.menu-item {
+  border: 1px solid #4b8fb1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.menu-label {
+  font-size: 18px;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu-label:hover {
+  background-color: #3b7a9e;
+}
+
+.has-submenu .submenu-icon {
+  transition: transform 0.3s ease;
+}
+
+.has-submenu .submenu-icon.open {
+  transform: rotate(180deg);
+}
+
+/* Submenu */
+.submenu {
+  padding-left: 20px;
+  background-color: #3b7a9e;
+}
+
+.submenu-item {
+  font-size: 16px;
+  padding: 8px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submenu-item:hover {
+  background-color: #4b8fb1;
+}

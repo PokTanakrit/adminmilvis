@@ -1,0 +1,82 @@
+.statistics-page {
+    display: flex;
+    font-family: 'Prompt', sans-serif; /* ฟอนต์ภาษาไทย */
+    height: 100vh;
+    background-color: #f9fafb; /* พื้นหลัง */
+}
+
+.statistics-container {
+    flex: 1;
+    padding: 30px;
+    background-color: #f9fafb; /* สีพื้นหลัง */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 250px; /* ชดเชยความกว้างของ Sidebar */
+    padding: 20px;
+    width: calc(100% - 250px); /* เพื่อป้องกันการล้นหน้าจอ */
+    box-sizing: border-box;
+}
+
+
+.charts-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap; /* ให้กราฟจัดเรียงแบบ responsive */
+    justify-content: center;
+}
+
+.chart-box {
+    background-color: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 600px; /* กำหนดขนาด */
+    text-align: center;
+    position: relative;
+}
+
+.chart-box h2 {
+    font-size: 18px;
+    color: #1e3a8a;
+    margin-bottom: 10px;
+}
+
+.chart-box p {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 15px;
+}
+
+
+
+.chart-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 5px;
+}
+
+.chart-control-button {
+    background-color: #e5e7eb;
+    border: none;
+    border-radius: 50%;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.chart-control-button:hover {
+    background-color: #d1d5db;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .charts-container {
+        flex-direction: column;
+    }
+}

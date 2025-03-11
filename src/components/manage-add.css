@@ -1,0 +1,55 @@
+.manage-add-page {
+    display: flex;
+    font-family: 'Prompt', sans-serif; /* ฟอนต์ภาษาไทย */
+    flex-direction: row;
+    height: 100vh;
+}
+
+
+.manage-add-container {
+    width: 80%;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-left: 1px solid #e0e0e0;
+    margin-left: 250px; /* ชดเชยความกว้างของ Sidebar */
+    width: calc(100% - 250px); /* เพื่อป้องกันการล้นหน้าจอ */
+    box-sizing: border-box;
+}
+
+.manage-add-cluster {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.manage-add-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.manage-add-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.manage-add-button:hover {
+    background-color: #f1f1f1;
+}
+
+.manage-add-button-text {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.manage-add-arrow {
+    font-size: 20px;
+    font-weight: bold;
+}

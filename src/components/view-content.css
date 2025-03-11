@@ -1,0 +1,270 @@
+.view-content-page {
+    display: flex;
+}
+
+.view-content-container {
+    flex: 1;
+    padding: 20px;
+    margin-left: 250px; /* ชดเชยความกว้างของ Sidebar */
+    width: calc(100% - 250px); /* เพื่อป้องกันการล้นหน้าจอ */
+    box-sizing: border-box;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.view-content-title {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #333;
+}
+
+.content-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* เพิ่มระยะห่างระหว่างแต่ละรายการ */
+}
+
+.content-item {
+    display: flex;
+    flex-direction: column; /* จัดให้อยู่ในแนวตั้ง */
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #f7f7f7;
+    gap: 10px; /* ระยะห่างระหว่างเนื้อหาในแต่ละรายการ */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.content-details label {
+    display: block;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.content-details input,
+.content-details textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    background: #fff;
+    transition: border-color 0.3s ease;
+}
+
+.content-details input:focus,
+.content-details textarea:focus {
+    border-color: #2196f3;
+    outline: none;
+    box-shadow: 0 0 5px rgba(33, 150, 243, 0.5);
+}
+
+.content-details textarea {
+    resize: vertical; /* อนุญาตให้ปรับขนาดแนวตั้งได้ */
+    min-height: 500px;
+}
+
+.content-similarity {
+    font-size: 0.95rem;
+    color: #555;
+    font-style: italic;
+}
+
+.delete-button {
+    background: #f44336;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    align-self: flex-end; /* จัดให้ปุ่มลบอยู่ขวาสุด */
+}
+
+.delete-button:hover {
+    background: #d32f2f;
+}
+
+.action-buttons {
+    margin-top: 30px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px; /* เพิ่มระยะห่างระหว่างปุ่ม */
+}
+
+.back-button,
+.add-button,
+.cancel-button {
+    padding: 12px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.back-button {
+    background: #2196f3;
+    color: #fff;
+}
+
+.add-button {
+    background: #4caf50;
+    color: #fff;
+}
+
+.cancel-button {
+    background: #f44336;
+    color: #fff;
+}
+
+.back-button:hover {
+    background: #1976d2;
+}
+
+.add-button:hover {
+    background: #388e3c;
+}
+
+.cancel-button:hover {
+    background: #d32f2f;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-container {
+    background: white;
+    padding: 30px 20px; /* เพิ่ม padding ด้านบนให้เนื้อหาลงมา */
+    border-radius: 10px;
+    text-align: left; /* จัดเนื้อหาให้อยู่ด้านซ้าย */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    max-width: 80%;
+    position: relative;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end; /* จัดปุ่มให้อยู่ทางขวา */
+    gap: 15px; /* ระยะห่างระหว่างปุ่ม */
+    margin-top: 40px; /* เพิ่มระยะห่างด้านบนของปุ่ม */
+}
+
+.modal-cancel,
+.modal-confirm {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 120px; /* กำหนดความกว้างของปุ่มให้เท่ากัน */
+    text-align: center; /* จัดข้อความให้อยู่กลาง */
+}
+
+.modal-cancel {
+    background-color: #f44336;
+    color: white;
+}
+
+.modal-confirm {
+    background-color: #4caf50;
+    color: white;
+}
+
+.modal-confirm:hover {
+    scale: 1.2;
+    
+}
+.modal-cancel:hover {
+    scale: 1.2;
+    
+}
+
+.modal-header-warning {
+    font-size: 28px; /* ขนาดฟอนต์ 28px สำหรับหัวข้อ */
+    font-weight: bold;
+    color: #f44336; /* สีแดงเพื่อเน้น WARNING */
+    margin-bottom: 10px;
+}
+
+.modal-header-password {
+    font-size: 28px; /* ขนาดฟอนต์ 28px สำหรับหัวข้อ */
+    font-weight: bold;
+    color: hsl(0, 0%, 0%); /* สีแดงเพื่อเน้น WARNING */
+    margin-bottom: 10px;
+}
+
+.modal-content {
+    font-size: 18px; /* ขนาดฟอนต์ 20px สำหรับเนื้อหา */
+    color: #333; /* สีเทาเข้ม */
+    margin-bottom: 10px;
+}
+
+.modal-footer {
+    font-size: 16px; /* ขนาดฟอนต์ 16px สำหรับข้อความเพิ่มเติม */
+    color: #666; /* สีเทาอ่อน */
+}
+
+.close-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: 24px;
+    background: transparent;
+    color: black;
+    border: transparent;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    scale: 1.2;
+    color: red;
+}
+
+.password-input {
+    width: 100%; /* ให้ input มีความกว้างเต็ม container */
+    padding: 10px; /* เพิ่มระยะห่างภายใน */
+    margin: 10px 0; /* ระยะห่างระหว่าง input กับ element อื่น */
+    border: 1px solid #ccc; /* เส้นขอบของ input */
+    border-radius: 5px; /* มุมโค้ง */
+    font-size: 16px; /* ขนาดตัวอักษร */
+    box-sizing: border-box; /* รวม padding และ border ในขนาด */
+    outline: none; /* ลบเส้นขอบเมื่อ focus */
+    transition: border-color 0.3s ease; /* เพิ่ม transition */
+}
+
+.password-input:focus {
+    border-color: #007BFF; /* สีเส้นขอบเมื่อ focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* เพิ่มเงา */
+}
+
+.error-message {
+    color: #f44336; /* สีแดง */
+    font-size: 14px; /* ขนาดตัวอักษร */
+    margin-top: 5px; /* เพิ่มระยะห่างด้านบน */
+    margin-bottom: 10px; /* เพิ่มระยะห่างด้านล่าง */
+    font-weight: bold; /* ทำให้ข้อความหนา */
+    display: inline-block; /* ทำให้ข้อความอยู่ในบรรทัด */
+    background-color: #ffe6e6; /* พื้นหลังสีอ่อนสำหรับข้อความ */
+    padding: 5px 10px; /* ระยะห่างภายใน */
+    border: 1px solid #f44336; /* เส้นขอบสีแดง */
+    border-radius: 5px; /* มุมโค้ง */
+    box-sizing: border-box; /* รวม padding และ border ในขนาด */
+}

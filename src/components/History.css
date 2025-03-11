@@ -1,0 +1,108 @@
+    .history-page {
+        display: flex;
+        font-family: 'Prompt', sans-serif; /* ฟอนต์ภาษาไทย */
+        height: 100vh;
+        background-color: #f9fafb; /* พื้นหลัง */
+    }
+    
+    .history-content {
+        margin-left: 250px; /* ชดเชยความกว้างของ Sidebar */
+        padding: 20px;
+        width: calc(100% - 250px); /* เพื่อป้องกันการล้นหน้าจอ */
+        box-sizing: border-box;
+    }
+    
+    .history-content h2 {
+        margin-bottom: 20px;
+    }
+    
+    /* Table Styles */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-top: 20px; /* เพิ่มช่องว่างด้านบน */
+    }
+
+    table th,
+    table td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: left;
+        font-size: 14px;
+        color: #333; /* เปลี่ยนสีข้อความให้ดูนุ่มนวล */
+    }
+
+    table th {
+        background-color: #2d5a75;
+        color: white;
+        text-transform: uppercase; /* ทำให้ตัวอักษรในหัวข้อเป็นตัวใหญ่ */
+        font-size: 16px; /* เพิ่มขนาดข้อความในหัวข้อ */
+        font-weight: bold; /* เน้นหัวข้อ */
+    }
+
+    table tbody tr:nth-child(even) {
+        background-color: #f9f9f9; /* สีพื้นหลังแถวคู่ */
+    }
+
+    table tbody tr:hover {
+        background-color: #f1f1f1; /* สีพื้นหลังเมื่อ Hover */
+        cursor: pointer; /* แสดง Cursor แบบมือ */
+    }
+
+    /* Responsive Table */
+    @media (max-width: 768px) {
+        table {
+            font-size: 12px;
+        }
+
+        table th, table td {
+            padding: 8px; /* ลด Padding บนอุปกรณ์ที่หน้าจอเล็ก */
+        }
+    }
+
+    /* Optional Buttons or Links in Table */
+    table td button,
+    table td a {
+        padding: 5px 10px;
+        background-color: #2d5a75;
+        color: white;
+        text-decoration: none;
+        border: none;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+        display: inline-block;
+        text-align: center;
+    }
+
+    table td button:hover,
+    table td a:hover {
+        background-color: #1d3b4f;
+        text-decoration: underline; /* เพิ่มเส้นใต้เมื่อ Hover */
+    }
+
+    /* Optional Admin Section (if needed) */
+    .admin-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .admin-icon {
+        font-size: 24px;
+        margin-right: 10px;
+        color: #ffffff;
+    }
+
+    .admin-text {
+        font-size: 14px;
+        color: hsl(0, 0%, 77%);
+    }
+
+    .username {
+        font-weight: bold;
+        color: hsl(0, 0%, 100%);
+    }

@@ -1,0 +1,69 @@
+    .admin-login-container {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: white;
+        border: 1px solid #000;
+    }
+    
+    .admin-login-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 500px;
+        position: relative;
+        top: 0px; /* เพิ่มเพื่อดันโลโก้และกล่องขึ้น */
+    }
+    
+    .admin-logo {
+        width: 400px;
+        height: 400px;
+        margin-bottom: 20px;
+        margin-top: -200px; /* ดันโลโก้ขึ้นจากเดิม */
+    }
+    
+    .input-container {
+        margin: 10px 0;
+    }
+    
+    .input-field {
+        width: 400px;
+        height: 50px;
+        border: 1px solid #d9d9d9;
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 24px;
+        color: #000000;
+        background-color: white;
+    }
+    
+    .input-field::placeholder {
+        color: rgba(0, 0, 0, 0.2);
+    }
+    
+    .login-button {
+        margin-top: 20px;
+        width: 450px;
+        height: 65px;
+        background-color: black;
+        color: white;
+        font-size: 18px;
+        font-family: "Poppins", sans-serif;
+        font-weight: bold;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+    
+    .login-button:hover {
+        background-color: #333;
+    }
+    
+    .error-message {
+        color: red;
+        font-size: 16px;
+        margin-top: 5px;
+        text-align: center;
+    }
