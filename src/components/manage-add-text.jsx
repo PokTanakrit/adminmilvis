@@ -7,6 +7,7 @@ const ManageAddText = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const username = location.state?.username || "Guest";
+    const [option_select_cluster, setOptionSelectCluster] = useState([]);
     const [option_select_subject, setOptionSelectSubject] = useState([]);
     const [option_select_sub_subject, setOptionSelectSubSubject] = useState([]);
 
@@ -52,6 +53,20 @@ const ManageAddText = () => {
             },
         });
     };
+
+    useEffect(() => {
+        fetch("http://localhost:5000/api/cluster")
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setOptionSelectCluster(data);  // เก็บข้อมูลใน option_select_subject
+            })
+            .catch((error) => console.error("Error fetching subjects:", error));
+    }, []);
 
     useEffect(() => {
         fetch("http://localhost:5000/api/subjects")
@@ -106,14 +121,20 @@ const ManageAddText = () => {
                         </div>
                         <div className="form-group">
                             <label htmlFor="cluster" className="form-label">Cluster :</label>
-                            <input
-                                type="text"
-                                id="cluster"
-                                name="cluster"
-                                className="form-input"
-                                value={formData.cluster}
-                                onChange={handleChange}
-                            />
+                                <select
+                                    id="cluster"
+                                    name="cluster"
+                                    className="form-select"
+                                    value={formData.cluster}
+                                    onChange={handleChange}
+                                >
+                                    <option value="">เลือก Cluster</option>
+                                    {option_select_cluster.map((cluster) => (
+                                        <option key={cluster.cluster_id} value={cluster.cluster_id}>
+                                            {cluster.cluster_name}
+                                        </option>
+                                    ))}
+                                </select>
                         </div>
                     </div>
 

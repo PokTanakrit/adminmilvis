@@ -98,11 +98,7 @@ const AdminLogin = () => {
 
         {error && <p className="error-message">{error}</p>} {/* แสดงข้อความผิดพลาด */}
 
-        {!username ? (
-          <button className="login-button"  onClick={handleLogin}>LOGIN</button>
-        ) : (
-          <button className="logout-button" onClick={handleLogout}>LOGOUT</button>
-        )}
+        <button className="login-button"  onClick={handleLogin}>LOGIN</button>
       </div>
     </div>
   );
