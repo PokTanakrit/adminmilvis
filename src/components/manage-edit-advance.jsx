@@ -48,7 +48,7 @@ const ManageEditAdvance = () => {
 
     const handleSearch = async () => {
         try {
-            const response = await fetch("http://localhost:5000/searchkeyword", {
+            const response = await fetch("http://127.0.0.1:5000/searchkeyword", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ text: formData }),
@@ -116,7 +116,7 @@ const ManageEditAdvance = () => {
         }
     
         try {
-            const response = await fetch("http://localhost:5000/update", {
+            const response = await fetch("http://127.0.0.1:5000/update", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -157,7 +157,7 @@ const ManageEditAdvance = () => {
     };
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/subjects")
+        fetch("http://127.0.0.1:5000/api/subjects")
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -172,7 +172,7 @@ const ManageEditAdvance = () => {
 
     useEffect(() => {
         if (formData.metadata.subject) {
-            fetch(`http://localhost:5000/api/sub_subjects/${formData.metadata.subject}`)
+            fetch(`http://127.0.0.1:5000/api/sub_subjects/${formData.metadata.subject}`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Network response was not ok");

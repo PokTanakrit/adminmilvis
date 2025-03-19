@@ -30,6 +30,7 @@
         align-items: center;
         gap: 10px;
         margin-bottom: 20px;
+        margin-top: 20px;  /* ปรับค่าตามที่ต้องการ */
     }
     
     .file-name-display {

@@ -55,7 +55,7 @@ const ManageAddText = () => {
     };
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/cluster")
+        fetch("https://9b50-202-44-40-186.ngrok-free.app/api/cluster")
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -69,7 +69,7 @@ const ManageAddText = () => {
     }, []);
 
     useEffect(() => {
-        fetch("http://localhost:5000/api/subjects")
+        fetch("https://9b50-202-44-40-186.ngrok-free.app/api/subjects")
             .then((response) => {
                 if (!response.ok) {
                     throw new Error("Network response was not ok");
@@ -84,7 +84,7 @@ const ManageAddText = () => {
 
     useEffect(() => {
         if (formData.subject) {
-            fetch(`http://localhost:5000/api/sub_subjects/${formData.subject}`)
+            fetch(`https://9b50-202-44-40-186.ngrok-free.app/api/sub_subjects/${formData.subject}`)
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Network response was not ok");

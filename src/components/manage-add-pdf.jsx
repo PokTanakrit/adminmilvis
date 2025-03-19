@@ -10,74 +10,149 @@ const ManageAddPDF = () => {
     const [option_select_cluster, setOptionSelectCluster] = useState([]);
     const [option_select_subject, setOptionSelectSubject] = useState([]);
     const [option_select_sub_subject, setOptionSelectSubSubject] = useState([]);
+    const [selectedPageInput, setSelectedPageInput] = useState("");  // ✅ เพิ่มตัวแปรเก็บค่าที่ผู้ใช้ป้อน
+    const [selectedPages, setSelectedPages] = useState([]);  // ✅ เก็บรายการหน้าที่ใช้จริง
+
 
     const [formData, setFormData] = useState({
         file: null,
         source: "",
-        cluster: "",
-        subject: "",
-        collection_name: "",
-        sub_subject: "",
+        cluster: 0,
+        subject: 0,
+        sub_subject: 0,
         totalPages: 0,
     });
 
     const [isLoading, setIsLoading] = useState(false);
     const [resultData, setResultData] = useState(null);
 
+    const parsePageNumbers = (input) => {
+        console.log("📌 Raw Input to Parse:", input);
+    
+        if (!input || input.trim() === "") {
+            console.warn("⚠️ ไม่มีค่า input ให้ parse");
+            return [];
+        }
+    
+        const pages = new Set();
+        const regex = /^\d+(-\d+)?(,\d+(-\d+)?)*$/;
+    
+        if (!regex.test(input.replace(/\s/g, ""))) {
+            alert("รูปแบบตัวเลขไม่ถูกต้อง กรุณาใช้รูปแบบ: 1,3,5-7");
+            return [];
+        }
+    
+        input.split(",").forEach((part) => {
+            if (part.includes("-")) {
+                let [start, end] = part.split("-").map(num => parseInt(num, 10) - 1);
+                if (isNaN(start) || isNaN(end) || start > end) {
+                    console.warn(`⚠️ ค่าไม่ถูกต้อง: ${part}`);
+                    return;
+                }
+                for (let i = start; i <= end; i++) pages.add(i);
+            } else {
+                const pageNum = parseInt(part, 10) - 1;
+                if (!isNaN(pageNum)) pages.add(pageNum);
+            }
+        });
+    
+        return [...pages].sort((a, b) => a - b);
+    };
+    
+
+    useEffect(() => {
+        console.log("📌 Updated formData:", formData);
+    }, [formData]);
+
+    useEffect(() => {
+        if (!resultData) return;
+    
+        setResultData((prevData) => 
+            prevData.map((page) => ({
+                ...page,
+                metadata: {
+                    ...page.metadata,
+                    cluster: formData.cluster,  
+                    subject: formData.subject,  
+                    sub_subject: formData.sub_subject,
+                    totalPages: formData.totalPages,
+                    source: formData.source,
+                }
+            }))
+        );
+    }, [formData]); // ✅ Run only when `formData` changes
+    
+
     const handleChange = (e) => {
-        const { name, value, files } = e.target;
-        setFormData({
-            ...formData,
-            [name]: files ? files[0] : value,
+        const { name, value } = e.target;
+    
+        setFormData((prevData) => {
+            const updatedData = { ...prevData, [name]: value };
+            console.log("📌 Updated formData:", updatedData);
+            return updatedData;
         });
     };
+    
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         setFormData({ ...formData, file: file || null });
     };
 
+    const handleInputChange = (e) => {
+        setSelectedPageInput(e.target.value);
+        console.log("📌 Updated Input:", e.target.value);
+    };
+    
+
     const handleReadFile = async () => {
         if (!formData.file) {
             alert("กรุณาเลือกไฟล์ก่อน!");
             return;
         }
-
+    
         const formDataToSend = new FormData();
         formDataToSend.append("file", formData.file);
-
+    
         try {
             setIsLoading(true);
             const response = await fetch("http://localhost:3500/api/upload_pdf", {
                 method: "POST",
                 body: formDataToSend,
             });
-
+    
             if (response.ok) {
                 const result = await response.json();
-                console.log("อ่านไฟล์สำเร็จ!");
-
-                setFormData({
-                                    ...formData,
-                                    source: result.data[0]?.metadata?.source || "",
-                                    title: result.data[0]?.metadata?.title || "",
-                                    totalPages: result.data.length,
-                });
-
-                const formattedData = result.data.map((page) => ({
-                    metadata: {
-                        source: page.metadata?.source || "",
-                        cluster: formData.cluster || "",
-                        subject: formData.subject || "",
-                        sub_subject: formData.sub_subject || "",
-                        totalPages: page.metadata?.total_pages,
-                        page: page.metadata?.page || 0,
-                    },
-                    page_content: page.page_content || "",
+                console.log("📌 อ่านไฟล์สำเร็จ!", result);
+    
+                setFormData((prev) => ({
+                    ...prev,
+                    source: formData.file.name || "",
+                    totalPages: result.data.length,
                 }));
-
-                setResultData(formattedData);
+    
+                const filteredPages = parsePageNumbers(selectedPageInput);
+                setSelectedPages(filteredPages);
+    
+                setResultData((prev) => {
+                    const filteredData = filteredPages.length > 0
+                        ? result.data.filter(page => filteredPages.includes(page.metadata.page))
+                        : result.data;
                 
+                    return filteredData
+                        .filter((page) => page.page_content && page.page_content.trim() !== "") // กรองเฉพาะข้อมูลที่มี page_content ที่ไม่ว่าง
+                        .map((page) => ({
+                            metadata: {
+                                source: formData.file.name || "",
+                                cluster: formData.cluster || 0,
+                                subject: formData.subject || 0,
+                                sub_subject: formData.sub_subject || 0,
+                                totalPages: page.metadata?.total_pages,
+                                page: page.metadata?.page || 0,
+                            },
+                            page_content: page.page_content || "",
+                        }));
+                });
             } else {
                 alert("เกิดข้อผิดพลาดในการอ่านไฟล์");
             }
@@ -87,7 +162,12 @@ const ManageAddPDF = () => {
         } finally {
             setIsLoading(false);
         }
-    }; // เพิ่มปีกกาปิดฟังก์ชัน
+    };
+    
+
+    
+    
+    
 
     const handleViewContent = () => {
         if (!resultData) {
@@ -156,6 +236,18 @@ const ManageAddPDF = () => {
             <div className="manage-add-pdf-container">
                 <h1 className="manage-add-pdf-title">เพิ่มข้อมูลใหม่ - PDF</h1>
                 <form className="manage-add-pdf-form">
+                    <div className="form-group">
+                            <label htmlFor="selectedPages" className="form-label">เลือกหน้า (เช่น 1,3,5-7):</label>
+                            <input
+                                type="text"
+                                id="selectedPages"
+                                name="selectedPages"
+                                className="form-input"
+                                value={selectedPageInput}
+                                onChange={handleInputChange}
+                                placeholder="ระบุหน้าที่ต้องการ หรือเว้นว่างเพื่อใช้ทั้งหมด"
+                            />
+                    </div>
                     <div className="file-upload-row">
                         <input
                             type="file"
@@ -192,14 +284,14 @@ const ManageAddPDF = () => {
                             <label htmlFor="source" className="form-label">Source :</label>
                             <input
                                 type="text"
-                                id="source"
-                                name="source"
+                                id="fileName"
+                                name="fileName"
                                 className="form-input"
-                                value={formData.source}
-                                onChange={handleChange}
-                                placeholder="ใส่ข้อมูลแหล่งที่มา"
+                                value={formData.file ? formData.file.name : ""}
+                                placeholder="ชื่อไฟล์จะปรากฏที่นี่"
                                 readOnly
                             />
+
                         </div>
                         <div className="form-group">
                             <label htmlFor="cluster" className="form-label">Cluster :</label>
