@@ -18,51 +18,122 @@ const ViewContent = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [warningInfo, setWarningInfo] = useState(null); // เก็บข้อมูล index และ similarity
     const isFetching = useRef(false); // ย้ายมาไว้ข้างนอก
+    const [selectedPageInput, setSelectedPageInput] = useState("");
+    const [replacementMapping, setReplacementMapping] = useState({});
+    
+    const handleInputChange = (event) => {
+        setSelectedPageInput(event.target.value);
+    };
+
+    const parseSelectedIndexes = (input) => {
+        const selectedIndexes = new Set();
+    
+        // เช็คว่ามีช่องว่างระหว่างตัวเลขหรือไม่
+        if (/\s/.test(input)) {
+            setErrorMessage("Invalid input: Spaces between numbers are not allowed.");
+            return [];
+        }
+    
+        // แยกส่วนด้วยคอมม่าและขีด
+        const parts = input.split(/[,\s]+/).map(part => part.trim());
+    
+        parts.forEach(part => {
+            if (part.includes("-")) {
+                // ตรวจสอบกรณีช่วงของตัวเลข เช่น 1-5
+                const rangeParts = part.split("-").map(num => parseInt(num, 10));
+                if (rangeParts.length === 2 && !isNaN(rangeParts[0]) && !isNaN(rangeParts[1])) {
+                    const [start, end] = rangeParts;
+                    for (let i = start; i <= end; i++) {
+                        selectedIndexes.add(i);
+                    }
+                }
+            } else if (part.includes(".")) {
+                // ถ้าค่ามี . (ไม่อนุญาตให้ใช้)
+                setErrorMessage("Invalid input: Periods are not allowed.");
+                return [];
+            } else {
+                // ตรวจสอบกรณีตัวเลขเดี่ยวๆ เช่น 1, 5
+                const num = parseInt(part, 10);
+                if (!isNaN(num)) {
+                    selectedIndexes.add(num);
+                }
+            }
+        });
+    
+        return Array.from(selectedIndexes).sort((a, b) => a - b);
+    };
+    
+    
+
+    useEffect(() => {
+        // ถ้า selectedPageInput เป็น null หรือว่าง, ล้างข้อความ error
+        if (selectedPageInput == null || selectedPageInput.trim() === "") {
+            setErrorMessage(''); // ล้างข้อความ error
+            return; // ออกจาก useEffect เมื่อ selectedPageInput เป็น null หรือว่าง
+        }
+    
+        // ถ้า selectedPageInput ไม่ใช่ null, ให้ parse index
+        const selectedIndexes = parseSelectedIndexes(selectedPageInput);
+        console.log("Parsed Indexes:", selectedIndexes);
+    
+        // ถ้า selectedIndexes ว่างแสดงว่ามีบางอย่างผิดพลาด
+        if (selectedIndexes.length === 0) {
+            setErrorMessage('Invalid input: Periods are not allowed.');
+        } else {
+            setErrorMessage(''); // ล้างข้อความ error หากการ parse สำเร็จ
+        }
+    
+        // ตั้งค่าการ mapping ของ replacement
+        setReplacementMapping(selectedIndexes);
+    }, [selectedPageInput]);
+    
+    
+
 
     useEffect(() => {
         const fetchSimilarityScores = async () => {
-            if (isFetching.current) return; // ถ้า fetch อยู่ให้ return
+            if (isFetching.current) return;
             isFetching.current = true;
     
-            console.log("Total items:", contentData.length);
-    
-            const updatedData = [...contentData]; // สำเนาข้อมูลเดิม
-    
             try {
-                // ใช้ Promise.all เพื่อทำ concurrent requests
-                const fetchPromises = updatedData.map(async (item, i) => {
-    
+                const updatedData = await Promise.all(contentData.map(async (item) => {
                     const response = await fetch("http://localhost:5000/searchkeyword", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ text: item.page_content }),
+                        body: JSON.stringify({ text: item.page_content })
                     });
     
                     if (response.ok) {
                         const result = await response.json();
-                        const maxHybridScore = result.results.length > 0
-                            ? Math.max(...result.results.map(r => r.hybrid_score))
-                            : 0;
-    
-                        updatedData[i] = { ...item, similarity: maxHybridScore };
-                    } else {
-                        updatedData[i] = { ...item, similarity: 0 };
+                        const maxScoreItem = result.results?.reduce((maxItem, currentItem) =>
+                            currentItem.hybrid_score > maxItem.hybrid_score ? currentItem : maxItem, 
+                            result.results[0] || {}
+                        );
+                        console.log(maxScoreItem)
+                        return { 
+                            ...item, 
+                            similarity: maxScoreItem?.hybrid_score || 0, 
+                            similarContent: maxScoreItem?.text || "ไม่เจอข้อมูล", 
+                            similarid: maxScoreItem?.id || null  // ถ้าไม่มี id ให้ตั้งค่าเป็น null
+                        };
                     }
-                });
-    
-                await Promise.all(fetchPromises); // รอให้ fetch ทั้งหมดเสร็จ
-    
-                setContentData(updatedData); // อัปเดต state หลังจาก fetch เสร็จ
+                    return { ...item, similarity: 0, similarContent: "ไม่เจอข้อมูล", similarid: null };
+                }));
+                console.log(updatedData)
+                setContentData(updatedData);
             } catch (error) {
-                console.error("Error fetching data:", error);
-            } 
+                console.error("Error fetching similarity scores:", error);
+            } finally {
+                isFetching.current = false;
+            }
         };
     
-        fetchSimilarityScores(); // เรียกใช้ฟังก์ชัน fetch
-    }, [contentData]); // ให้ทำงานเมื่อ contentData เปลี่ยนแปลง
+        if (contentData.length > 0) {
+            fetchSimilarityScores();
+        }
+    }, [JSON.stringify(contentData)]);
     
     
-
     const handleDelete = (index) => {
         const updatedContent = [...contentData];
         updatedContent.splice(index, 1);
@@ -76,11 +147,13 @@ const ViewContent = () => {
     };
 
     const handleAddClick = () => {
-        // หารายการที่ similarity > 4
-        const highSimilarityItems = contentData
-            .map((item, index) => ({ index, similarity: item.similarity }))
-            .filter(item => item.similarity > 7);
-
+        const highSimilarityItems = contentData.map((item, index) => ({
+            index, 
+            similarity: item.similarity || 0,
+            similarContent: item.similarContent,
+            similarid:item.id
+        })).filter(item => item.similarity > 7);
+    
         if (highSimilarityItems.length > 0) {
             setWarningInfo(highSimilarityItems);
             setShowWarningModal(true);
@@ -90,30 +163,40 @@ const ViewContent = () => {
     };
 
     const handleWarningConfirm = () => {
+        const selectedIndexes = parseSelectedIndexes(selectedPageInput);
+        console.log(selectedIndexes)
+
+        setReplacementMapping(selectedIndexes); // แก้ให้ถูกต้อง
         setShowWarningModal(false);
         setShowPasswordModal(true);
     };
+    
+    
 
     const handlePasswordSubmit = async () => {
         if (!password.trim()) {
             setErrorMessage("กรุณากรอกรหัสผ่าน");
             return;
         }
-
+        console.clear(); 
+        console.log(contentData)
+        console.log(replacementMapping)
         try {
-            const response = await fetch("http://localhost:5000/inserttext", {
+            const response = await fetch("http://localhost:5000/insert", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     username,
                     password,
                     contentData,
-                    warningIndexes: warningInfo?.map(item => item.index) || [], // ส่ง index ที่ similarity > 7
+                    warningIndexes: warningInfo?.map(item => item.index) || [],
+                    replacementMapping, // ระบุว่า index ไหนแทนที่ ID ไหน
                 }),
             });
-
+    
             const data = await response.json();
-
+            console.log(data);
+    
             if (response.ok) {
                 console.log("ข้อมูลถูกส่งสำเร็จ!");
                 setShowPasswordModal(false);
@@ -127,6 +210,7 @@ const ViewContent = () => {
         }
         setPassword("");
     };
+    
 
     return (
         <div className="view-content-page">
@@ -189,15 +273,72 @@ const ViewContent = () => {
                             <span>WARNING !!!</span>
                             <button className="close-button" onClick={() => setShowWarningModal(false)}>×</button>
                         </div>
-                        <div className="modal-content">
-                            <p>พบเนื้อหาที่คล้ายกันสูง:</p>
-                            {warningInfo?.map(item => (
-                                <p key={item.index}>Index {item.index}: similarity score{item.similarity}</p>
-                            ))}
-                        </div>
-                        <div className="modal-footer">
-                            <p>กด ยืนยัน เพื่อดำเนินการต่อ</p>
-                        </div>
+                        
+                        {showWarningModal && (
+                            <div className="modal-overlay">
+                                <div className="modal-container">
+                                    <div className="modal-header-warning">
+                                        <span>WARNING !!!</span>
+                                        <button className="close-button" onClick={() => setShowWarningModal(false)}>×</button>
+                                    </div>
+                                    
+                                    <div className="modal-content">
+                                        <p>พบเนื้อหาที่คล้ายกันสูง:</p>
+                                        <table className="comparison-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Index</th>
+                                                    <th>เนื้อหาที่จะเพิ่ม</th>
+                                                    <th>เนื้อหาที่คล้ายกัน</th>
+                                                    <th>Similarity Score</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {warningInfo.map((item) => (
+                                                    <tr key={item.index}>
+                                                        <td>{item.index}</td>
+                                                        <td>{contentData[item.index]?.page_content}</td>
+                                                        <td>{item.similarContent}</td>
+                                                        <td>{item.similarity}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                        
+                                        {/* Input สำหรับเลือก index */}
+                                        <div className="form-group">
+                                            <label htmlFor="selectedPages" className="form-label">
+                                                เลือก index ที่ต้องการแทนที่ (เช่น 1,3,5-7):
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="selectedPages"
+                                                className="form-input"
+                                                value={selectedPageInput}
+                                                onChange={handleInputChange}
+                                                placeholder="ระบุ index ที่ต้องการ หรือเว้นว่างเพื่อใช้ทั้งหมด"
+                                            />
+                                        </div>
+
+                                        {/* ถ้ามี error ให้แสดงข้อความ */}
+                                        {errorMessage && (
+                                            <div className="error-message">
+                                                <p>{errorMessage}</p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="modal-buttons">
+                                        <button className="modal-confirm" onClick={handleWarningConfirm}>
+                                            ยืนยัน
+                                        </button>
+                                        <button className="modal-cancel" onClick={() => setShowWarningModal(false)}>
+                                            ย้อนกลับ
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )} 
                         <div className="modal-buttons">
                             <button className="modal-confirm" onClick={handleWarningConfirm}>
                                 ยืนยัน
@@ -209,6 +350,7 @@ const ViewContent = () => {
                     </div>
                 </div>
             )}
+
 
             {showPasswordModal && (
                 <div className="modal-overlay">

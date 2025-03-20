@@ -151,12 +151,14 @@
 
 .modal-container {
     background: white;
-    padding: 30px 20px; /* เพิ่ม padding ด้านบนให้เนื้อหาลงมา */
+    padding: 30px 20px;
     border-radius: 10px;
-    text-align: left; /* จัดเนื้อหาให้อยู่ด้านซ้าย */
+    text-align: left;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 400px;
-    max-width: 80%;
+    width: 1300px;
+    max-width: 90%;
+    max-height: 80vh; /* ทำให้ modal ไม่ล้นหน้าจอ */
+    overflow-y: auto; /* ทำให้สามารถเลื่อนดูเนื้อหาใน modal ได้ */
     position: relative;
 }
 
@@ -268,3 +270,86 @@
     border-radius: 5px; /* มุมโค้ง */
     box-sizing: border-box; /* รวม padding และ border ในขนาด */
 }
+
+/* ส่วนที่มี Scroll Bar */
+.scrollable-content {
+    max-height: 300px; /* กำหนดขนาดความสูงของตาราง */
+    overflow-y: auto; /* เพิ่ม Scroll Bar เฉพาะแนวตั้ง */
+    border: 1px solid #ddd;
+    padding: 10px;
+}
+/* ปรับขนาดตาราง */
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* ปรับขนาดคอลัมน์ */
+.comparison-table th:nth-child(1),
+.comparison-table td:nth-child(1) {
+    width: 10%; /* คอลัมน์ Index */
+    text-align: center;
+}
+
+.comparison-table th:nth-child(2),
+.comparison-table td:nth-child(2) {
+    width: 30%; /* คอลัมน์ เนื้อหาที่จะเพิ่ม */
+    word-wrap: break-word;
+}
+
+.comparison-table th:nth-child(3),
+.comparison-table td:nth-child(3) {
+    width: 30%; /* คอลัมน์ เนื้อหาที่คล้ายกัน */
+    word-wrap: break-word;
+}
+
+.comparison-table th:nth-child(4),
+.comparison-table td:nth-child(4) {
+    width: 15%; /* คอลัมน์ Similarity Score */
+    text-align: center;
+}
+
+.comparison-table th:nth-child(5),
+.comparison-table td:nth-child(5) {
+    width: 15%; /* คอลัมน์ Checkbox */
+    text-align: center;
+}
+
+/* เพิ่ม Scroll Bar ถ้าตารางยาวเกิน */
+.modal-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* ปรับสี Scroll Bar (เฉพาะ Chrome, Edge, และ Safari) */
+.scrollable-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.scrollable-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+

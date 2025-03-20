@@ -97,21 +97,21 @@ const ManageAddURL = () => {
 
 
     useEffect(() => {
-        fetch("https://8b46-202-44-40-186.ngrok-free.app/api/cluster")
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then((data) => {
-                setOptionSelectCluster(data);  // เก็บข้อมูลใน option_select_subject
-            })
-            .catch((error) => console.error("Error fetching subjects:", error));
-    }, []);
-
-    useEffect(() => {
-            fetch("https://8b46-202-44-40-186.ngrok-free.app/api/subjects")
+            fetch("http://localhost:5000/api/cluster")
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    setOptionSelectCluster(data);  // เก็บข้อมูลใน option_select_subject
+                })
+                .catch((error) => console.error("Error fetching subjects:", error));
+        }, []);
+    
+        useEffect(() => {
+            fetch("http://localhost:5000/api/subjects")
                 .then((response) => {
                     if (!response.ok) {
                         throw new Error("Network response was not ok");
@@ -122,25 +122,25 @@ const ManageAddURL = () => {
                     setOptionSelectSubject(data);  // เก็บข้อมูลใน option_select_subject
                 })
                 .catch((error) => console.error("Error fetching subjects:", error));
-    }, []);
-
-    useEffect(() => {
-        if (formData.subject) {
-            fetch(`https://8b46-202-44-40-186.ngrok-free.app/api/sub_subjects/${formData.subject}`)
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok");
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    setOptionSelectSubSubject(data);  // เก็บข้อมูลใน option_select_sub_subject
-                })
-                .catch((error) => console.error("Error fetching sub_subjects:", error));
-        } else {
-            setOptionSelectSubSubject([]);  // รีเซ็ตเมื่อไม่ได้เลือก subject
-        }
-    }, [formData.subject]);
+        }, []);
+    
+        useEffect(() => {
+            if (formData.subject) {
+                fetch(`http://localhost:5000/api/sub_subjects/${formData.subject}`)
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        setOptionSelectSubSubject(data);  // เก็บข้อมูลใน option_select_sub_subject
+                    })
+                    .catch((error) => console.error("Error fetching sub_subjects:", error));
+            } else {
+                setOptionSelectSubSubject([]);  // รีเซ็ตเมื่อไม่ได้เลือก subject
+            }
+        }, [formData.subject]);
 
     return (
         <div className="manage-add-url-page">
