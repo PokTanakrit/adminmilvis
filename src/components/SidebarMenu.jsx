@@ -47,6 +47,7 @@ const SidebarMenu = () => {
             ],
         },
         { label: "ประวัติ admin", link: "/admin-history", subItems: [] },
+        { label: "แบบฟอร์มการเพิ่มข้อมูล", link: "/templatefile", subItems: [] },
         { label: "Logout", link: "/login", subItems: [], action: handleLogout }, // ✅ ใช้ action logout
     ];
 

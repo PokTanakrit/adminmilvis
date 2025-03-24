@@ -9,11 +9,12 @@ import ManageAddURL from "./components/manage-add-url";
 import ManageAddText from "./components/manage-add-text";
 import ManageEdit from "./components/manage-edit";
 import ViewContent from "./components/view-content";
-import ManageEditAdvance from "./components/manage-edit-advance";
+
 import AdminHistory from "./components/Adminhistory"
 import SidebarMenu from "./components/SidebarMenu"; 
 import { UserProvider } from "./components/UserContext"; 
 import { PrivateRoute } from "./components/PrivateRoute"; 
+import FileDownload from "./components/Filedowload";
 
 const AppLayout = () => {
   const location = useLocation();  // ✅ ใช้ location เพื่อตรวจสอบเส้นทางปัจจุบัน
@@ -34,8 +35,8 @@ const AppLayout = () => {
         <Route path="/manage-add-url" element={<PrivateRoute element={<ManageAddURL />} />} />
         <Route path="/manage-add-text" element={<PrivateRoute element={<ManageAddText />} />} />
         <Route path="/manage-edit" element={<PrivateRoute element={<ManageEdit />} />} />
-        <Route path="/manage-edit-advance" element={<PrivateRoute element={<ManageEditAdvance />} />} />
         <Route path="/view-content" element={<PrivateRoute element={<ViewContent />} />} />
+        <Route path="/templatefile" element={<PrivateRoute element={<FileDownload/>}/>}/>
       </Routes>
     </div>
   );

@@ -22,7 +22,7 @@ const AdminLogin = () => {
     setError(""); // ล้างข้อความผิดพลาดก่อนส่งข้อมูล
 
     try {
-      const response = await fetch("http://localhost:5000/api/admin_login", {
+      const response = await fetch("https://5b17-202-44-40-186.ngrok-free.app/api/admin_login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +48,7 @@ const AdminLogin = () => {
   // ✅ ฟังก์ชัน Logout
   const handleLogout = async () => {
     try {
-      const response = await fetch("https://9b50-202-44-40-186.ngrok-free.app/logout", {
+      const response = await fetch("https://5b17-202-44-40-186.ngrok-free.app/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

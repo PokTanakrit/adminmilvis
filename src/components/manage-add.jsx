@@ -25,7 +25,7 @@ const ManageAdd = () => {
                         onClick={() => handleNavigate("/manage-add-pdf")}
                     >
                         <div className="manage-add-button-text">
-                            เพิ่มข้อมูลใหม่จากการนำเข้าไฟล์ pdf 
+                            เข้าไฟล์ pdf 
                         </div>
                         <span className="manage-add-arrow">{">"}</span>
                     </button>
@@ -36,7 +36,7 @@ const ManageAdd = () => {
                         onClick={() => handleNavigate("/manage-add-url")}
                     >
                         <div className="manage-add-button-text">
-                            เพิ่มข้อมูลใหม่จากการอ่านจาก เว็บไซต์
+                            อ่านจาก url เว็บไซต์  
                         </div>
                         <span className="manage-add-arrow">{">"}</span>
                     </button>
@@ -47,7 +47,7 @@ const ManageAdd = () => {
                         onClick={() => handleNavigate("/manage-add-text")}
                     >
                         <div className="manage-add-button-text">
-                            เพิ่มข้อมูลใหม่จากการพิมพ์ข้อความใหม่
+                            พิมพ์ข้อความใหม่
                         </div>
                         <span className="manage-add-arrow">{">"}</span>
                     </button>

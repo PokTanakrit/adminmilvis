@@ -11,7 +11,10 @@ const AdminHistory = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch("http://localhost:5000/api/logs");
+            const response = await fetch("https://5b17-202-44-40-186.ngrok-free.app/api/logs",{
+                headers: {
+                    "ngrok-skip-browser-warning": "true"
+                }});
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }

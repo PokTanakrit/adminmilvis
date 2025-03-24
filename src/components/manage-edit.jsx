@@ -4,21 +4,21 @@ import SidebarMenu from "./SidebarMenu";
 import "./manage-edit.css";
 import { useUser } from "./UserContext";
 
-const filterOptions = ["Keyword", "Source", "Category", "Subject"];
+
 
 const ManageEdit = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [searchText, setSearchText] = useState("");
-    const [selectedFilter, setSelectedFilter] = useState(filterOptions[0]);
+
     const [contentData, setContentData] = useState([]);
     const [logData, setLogData] = useState([]);
     const [showWarningModal, setShowWarningModal] = useState(false);
     const [showPasswordModal, setShowPasswordModal] = useState(false);
     const [password, setPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
-    const { username } = useUser(); 
-
+    const { username } = useUser();
+    const [isLoading, setIsLoading] = useState(false);
     // ✅ เคลียร์ข้อมูลทั้งหมดเมื่อรีเฟรชหน้าเว็บ
     useEffect(() => {
         const handleBeforeUnload = () => {
@@ -33,7 +33,7 @@ const ManageEdit = () => {
 
     const clearAllData = () => {
         setSearchText("");
-        setSelectedFilter(filterOptions[0]);
+
         setContentData([]);
         setLogData([]);
         setPassword("");
@@ -43,10 +43,10 @@ const ManageEdit = () => {
 
     const handleSearch = async () => {
         try {
-            const response = await fetch("http://127.0.0.1:5000/searchkeyword", {
+            const response = await fetch("https://5b17-202-44-40-186.ngrok-free.app/searchkeyword", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ text: searchText, filter: selectedFilter }),
+                body: JSON.stringify({ text: searchText}),
             });
 
             if (!response.ok) throw new Error("เกิดข้อผิดพลาดในการค้นหา");
@@ -123,43 +123,50 @@ const ManageEdit = () => {
     };
 
     const handlePasswordSubmit = async () => {
-        console.log(logData)
         if (!password.trim()) {
             setErrorMessage("กรุณากรอกรหัสผ่าน");
             return;
         }
     
+        if (!username.trim() || !logData) {
+            setErrorMessage("ข้อมูลไม่ครบถ้วน");
+            return;
+        }
+    
+        setIsLoading(true);
+    
         try {
-            const response = await fetch("http://127.0.0.1:5000/update", {
+            const response = await fetch("https://5b17-202-44-40-186.ngrok-free.app/update", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    username,  // ✅ ส่ง username
-                    password,  // ✅ ส่ง password
-                    logData,   // ✅ ส่ง logData
+                    username,
+                    password,
+                    logData,
                 }),
             });
     
             const data = await response.json();
+            console.log("Response data:", data); // ดูข้อมูลที่ API ส่งกลับมา
     
             if (response.ok && data.success) {
                 console.log("ข้อมูลถูกส่งสำเร็จ!");
                 clearAllData();
                 setShowPasswordModal(false);
-                console.log("Modal close");
             } else {
                 setErrorMessage(data.message || "เกิดข้อผิดพลาดในการส่งข้อมูล");
             }
         } catch (error) {
+            console.error("เกิดข้อผิดพลาด:", error);
             setErrorMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+        } finally {
+            setIsLoading(false);
         }
+    
         setPassword("");
     };
     
-
-    const handleAdvancedSearch = () => {
-        navigate("/manage-edit-advance");
-    };
+    
 
     return (
         <div className="manage-edit-page">
@@ -174,13 +181,7 @@ const ManageEdit = () => {
                         value={searchText}
                         onChange={(e) => setSearchText(e.target.value)}
                     />
-                    <select value={selectedFilter} onChange={(e) => setSelectedFilter(e.target.value)}>
-                        {filterOptions.map((option, index) => (
-                            <option key={index} value={option}>{option}</option>
-                        ))}
-                    </select>
                     <button onClick={handleSearch}>ค้นหา</button>
-                    <button onClick={handleAdvancedSearch}>ค้นหา-advance</button>
                 </div>
 
                 <div className="content-list">
@@ -270,7 +271,15 @@ const ManageEdit = () => {
                                 {errorMessage && <p className="error-message">{errorMessage}</p>}
                             </div>
                             <div className="modal-buttons">
-                                <button className="modal-confirm" onClick={handlePasswordSubmit}>ยืนยัน</button>
+                                <button className="modal-confirm" onClick={handlePasswordSubmit} disabled={isLoading}>
+                                    {isLoading ? "กำลังส่งข้อมูล..." : "ยืนยัน"}
+                                </button>
+
+                                {isLoading && (
+                                    <div className="loader-container">
+                                        <div className="loader"></div>
+                                    </div>
+                                )}
                                 <button className="modal-cancel" onClick={() => setShowPasswordModal(false)}>ย้อนกลับ</button>
                             </div>
                         </div>

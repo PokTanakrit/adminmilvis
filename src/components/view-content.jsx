@@ -20,6 +20,7 @@ const ViewContent = () => {
     const isFetching = useRef(false); // ย้ายมาไว้ข้างนอก
     const [selectedPageInput, setSelectedPageInput] = useState("");
     const [replacementMapping, setReplacementMapping] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
     
     const handleInputChange = (event) => {
         setSelectedPageInput(event.target.value);
@@ -97,7 +98,7 @@ const ViewContent = () => {
     
             try {
                 const updatedData = await Promise.all(contentData.map(async (item) => {
-                    const response = await fetch("http://localhost:5000/searchkeyword", {
+                    const response = await fetch("https://5b17-202-44-40-186.ngrok-free.app/searchkeyword", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ text: item.page_content })
@@ -178,11 +179,12 @@ const ViewContent = () => {
             setErrorMessage("กรุณากรอกรหัสผ่าน");
             return;
         }
+        setIsLoading(true); // แสดง Loader เมื่อกดปุ่ม
         console.clear(); 
         console.log(contentData)
         console.log(replacementMapping)
         try {
-            const response = await fetch("http://localhost:5000/insert", {
+            const response = await fetch("https://5b17-202-44-40-186.ngrok-free.app/insert", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -199,16 +201,20 @@ const ViewContent = () => {
     
             if (response.ok) {
                 console.log("ข้อมูลถูกส่งสำเร็จ!");
+                setIsLoading(false)
                 setShowPasswordModal(false);
                 setPassword("");
                 navigate(fromPage);
             } else {
+                setIsLoading(false)
                 setErrorMessage(data.message || "เกิดข้อผิดพลาดในการส่งข้อมูล");
             }
         } catch (error) {
             setErrorMessage("ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้");
+            setIsLoading(false)
         }
         setPassword("");
+        setIsLoading(false)
     };
     
 
@@ -370,9 +376,15 @@ const ViewContent = () => {
                             {errorMessage && <p className="error-message">{errorMessage}</p>}
                         </div>
                         <div className="modal-buttons">
-                            <button className="modal-confirm" onClick={handlePasswordSubmit}>
-                                ยืนยัน
+                            <button className="modal-confirm" onClick={handlePasswordSubmit} disabled={isLoading}>
+                                {isLoading ? "กำลังส่งข้อมูล..." : "ยืนยัน"}
                             </button>
+
+                            {isLoading && (
+                                <div className="loader-container">
+                                    <div className="loader"></div>
+                                </div>
+                            )}
                             <button className="modal-cancel" onClick={() => setShowPasswordModal(false)}>
                                 ย้อนกลับ
                             </button>

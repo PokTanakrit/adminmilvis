@@ -12,7 +12,6 @@ const ManageAddURL = () => {
             source: "",
             cluster: "",
             subject: "",
-            collection_name: "",
             sub_subject: "",
             totalPages: 0,
         });
@@ -30,6 +29,28 @@ const ManageAddURL = () => {
             [name]: value,
         });
     };
+
+        useEffect(() => {
+            console.log("📌 Updated formData:", formData);
+        }, [formData]);
+    
+        useEffect(() => {
+            if (!resultData) return;
+        
+            setResultData((prevData) => 
+                prevData.map((page) => ({
+                    ...page,
+                    metadata: {
+                        ...page.metadata,
+                        cluster: formData.cluster,  
+                        subject: formData.subject,  
+                        sub_subject: formData.sub_subject,
+                        totalPages: formData.totalPages,
+                        source: formData.source,
+                    }
+                }))
+            );
+        }, [formData]); // ✅ Run only when `formData` changes
 
     const handleFetchURL = async () => {
         if (!formData.url) {
@@ -94,53 +115,109 @@ const ManageAddURL = () => {
             },
         });
     };
-
+    useEffect(() => {
+        fetch("https://5b17-202-44-40-186.ngrok-free.app/api/cluster", {
+            headers: {
+                "ngrok-skip-browser-warning": "true"
+            }
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then((data) => {
+            setOptionSelectCluster(data);
+        })
+        .catch((error) => console.error("Error fetching clusters:", error));
+    }, []);
 
     useEffect(() => {
-            fetch("http://localhost:5000/api/cluster")
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok");
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    setOptionSelectCluster(data);  // เก็บข้อมูลใน option_select_subject
-                })
-                .catch((error) => console.error("Error fetching subjects:", error));
-        }, []);
-    
-        useEffect(() => {
-            fetch("http://localhost:5000/api/subjects")
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok");
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    setOptionSelectSubject(data);  // เก็บข้อมูลใน option_select_subject
-                })
-                .catch((error) => console.error("Error fetching subjects:", error));
-        }, []);
-    
-        useEffect(() => {
-            if (formData.subject) {
-                fetch(`http://localhost:5000/api/sub_subjects/${formData.subject}`)
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error("Network response was not ok");
-                        }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        setOptionSelectSubSubject(data);  // เก็บข้อมูลใน option_select_sub_subject
-                    })
-                    .catch((error) => console.error("Error fetching sub_subjects:", error));
-            } else {
-                setOptionSelectSubSubject([]);  // รีเซ็ตเมื่อไม่ได้เลือก subject
+        fetch("https://5b17-202-44-40-186.ngrok-free.app/api/subjects", {
+            headers: {
+                "ngrok-skip-browser-warning": "true"
             }
-        }, [formData.subject]);
+        })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setOptionSelectSubject(data);  // เก็บข้อมูลใน option_select_subject
+            })
+            .catch((error) => console.error("Error fetching subjects:", error));
+    }, []);
+
+    useEffect(() => {
+        if (formData.subject) {
+            fetch(`https://5b17-202-44-40-186.ngrok-free.app/api/sub_subjects/${formData.subject}`, {
+                headers: {
+                    "ngrok-skip-browser-warning": "true"
+                }
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    setOptionSelectSubSubject(data);  // เก็บข้อมูลใน option_select_sub_subject
+                })
+                .catch((error) => console.error("Error fetching sub_subjects:", error));
+        } else {
+            setOptionSelectSubSubject([]);  // รีเซ็ตเมื่อไม่ได้เลือก subject
+        }
+    }, [formData.subject]);
+
+    // useEffect(() => {
+    //         fetch("https://5b17-202-44-40-186.ngrok-free.app/api/cluster")
+    //             .then((response) => {
+    //                 if (!response.ok) {
+    //                     throw new Error("Network response was not ok");
+    //                 }
+    //                 return response.json();
+    //             })
+    //             .then((data) => {
+    //                 setOptionSelectCluster(data);  // เก็บข้อมูลใน option_select_subject
+    //             })
+    //             .catch((error) => console.error("Error fetching subjects:", error));
+    //     }, []);
+    
+    //     useEffect(() => {
+    //         fetch("https://5b17-202-44-40-186.ngrok-free.app/api/subjects")
+    //             .then((response) => {
+    //                 if (!response.ok) {
+    //                     throw new Error("Network response was not ok");
+    //                 }
+    //                 return response.json();
+    //             })
+    //             .then((data) => {
+    //                 setOptionSelectSubject(data);  // เก็บข้อมูลใน option_select_subject
+    //             })
+    //             .catch((error) => console.error("Error fetching subjects:", error));
+    //     }, []);
+    
+    //     useEffect(() => {
+    //         if (formData.subject) {
+    //             fetch(`http://localhost:5000/api/sub_subjects/${formData.subject}`)
+    //                 .then((response) => {
+    //                     if (!response.ok) {
+    //                         throw new Error("Network response was not ok");
+    //                     }
+    //                     return response.json();
+    //                 })
+    //                 .then((data) => {
+    //                     setOptionSelectSubSubject(data);  // เก็บข้อมูลใน option_select_sub_subject
+    //                 })
+    //                 .catch((error) => console.error("Error fetching sub_subjects:", error));
+    //         } else {
+    //             setOptionSelectSubSubject([]);  // รีเซ็ตเมื่อไม่ได้เลือก subject
+    //         }
+    //     }, [formData.subject]);
 
     return (
         <div className="manage-add-url-page">
